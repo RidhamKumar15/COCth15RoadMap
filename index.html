@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Interactive Builder Table</title>
+  <style>body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f4f6fb;
+  margin: 0;
+  padding: 20px 15px;
+  color: #333;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 12px; /* spacing between rows */
+  background: transparent;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  font-size: 1rem;
+}
+
+th, td {
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  border-radius: 10px;
+  user-select: none;
+  min-width: 60px;
+}
+
+th {
+  background: #2a2d45;
+  color: #f5f5f7;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: default;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+}
+
+tr {
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+tr:hover {
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.1);
+}
+
+td {
+  border-bottom: none;
+  background: transparent;
+  border-radius: 10px;
+}
+
+td.completed {
+  background: #21ba45;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(33, 186, 69, 0.4);
+}
+
+td:not(.completed):hover {
+  background: #dbe6ff;
+  color: #22223b;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+td.total-time {
+  cursor: default;
+  font-weight: 700;
+  color: #444;
+  white-space: nowrap;
+}
+
+td.total-time del {
+  color: #999;
+  margin-right: 8px;
+}
+
+/* Responsive font size & spacing for mobile */
+@media (max-width: 600px) {
+  body {
+    padding: 15px 10px;
+  }
+
+  table {
+    font-size: 0.9rem;
+  }
+
+  th, td {
+    padding: 14px 8px;
+    min-width: 40px;
+  }
+}
+
+/* Popup styles */
+#popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(34, 34, 59, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+#popup-content {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #22223b;
+  user-select: none;
+}
+
+#popup button {
+  margin: 15px 12px 0 12px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  background: #2a2d45;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(42, 45, 69, 0.3);
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+#popup button:hover {
+  background: #21ba45;
+  box-shadow: 0 6px 20px rgba(33, 186, 69, 0.5);
+}
+
+@media (max-width: 400px) {
+  #popup-content {
+    padding: 24px 18px;
+    font-size: 0.95rem;
+  }
+  #popup button {
+    padding: 10px 24px;
+    font-size: 1rem;
+  }
+}
+</style>
+</head>
+<body>
+  <h2>Builder Job Table</h2>
+  <table id="builder-table">
+    <thead>
+      <tr>
+        <th>Builder</th>
+        <th>Job 1</th>
+        <th>Job 2</th>
+        <th>Job 3</th>
+        <th>Job 4</th>
+        <th>Job 5</th>
+        <th>Job 6</th>
+        <th>Total Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Builder 1</td>
+        <td data-days="8">Spell Tower (x1) – 8d</td>
+        <td data-days="7.75">Inferno Tower (x1) – 7d 18h</td>
+        <td data-days="5">Giga Inferno (Lv.3) – 5d</td>
+        <td data-days="4">Gold Storage (x1) – 4d</td>
+        <td data-days="7.25">Blacksmith – 7d 6h</td>
+        <td data-days="6">Air Defence (x1) – 6d</td>
+        <td class="total-time" data-original="37">37d</td>
+      </tr>
+      <tr>
+        <td>Builder 2</td>
+        <td data-days="8">Spell Tower (x1) – 8d</td>
+        <td data-days="7.75">Inferno Tower (x1) – 7d 18h</td>
+        <td data-days="6">Giga Inferno (Lv.4) – 6d</td>
+        <td data-days="4">Gold Storage (x1) – 4d</td>
+        <td data-days="5.5">Dark Elixir Storage – 5d 12h</td>
+        <td data-days="6">Air Defence (x1) – 6d</td>
+        <td class="total-time" data-original="37.25">37d 6h</td>
+      </tr>
+      <tr>
+        <td>Builder 3</td>
+        <td data-days="7">Army Camp (x1) – 7d</td>
+        <td data-days="7.25">X-Bow (x1) – 7d 6h</td>
+        <td data-days="4">Giga Inferno (Lv.5) – 4d</td>
+        <td data-days="4">Elixir Storage (x1) – 4d</td>
+        <td data-days="7">Builder Hut (x1) – 7d</td>
+        <td data-days="6">Air Defence (x1) – 6d</td>
+        <td class="total-time" data-original="35.25">35d 6h</td>
+      </tr>
+      <tr>
+        <td>Builder 4</td>
+        <td data-days="7">Army Camp (x1) – 7d</td>
+        <td data-days="7.25">X-Bow (x1) – 7d 6h</td>
+        <td data-days="3">Giga Inferno (Lv.6) – 3d</td>
+        <td data-days="4">Elixir Storage (x1) – 4d</td>
+        <td data-days="7">Builder Hut (x1) – 7d</td>
+        <td data-days="6">Air Defence (x1) – 6d</td>
+        <td class="total-time" data-original="34.25">34d 6h</td>
+      </tr>
+      <tr>
+        <td>Builder 5</td>
+        <td data-days="9.5">Eagle Artillery – 9d 12h</td>
+        <td data-days="7.75">Inferno Tower (x1) – 7d 18h</td>
+        <td data-days="8">Clan Castle – 8d</td>
+        <td data-days="4">Gold Storage (x1) – 4d</td>
+        <td data-days="7">Builder Hut (x1) – 7d</td>
+        <td data-days="7">Army Camp (x1) – 7d</td>
+        <td class="total-time" data-original="43.25">43d 6h</td>
+      </tr>
+      <tr>
+        <td>Builder 6</td>
+        <td data-days="7">Army Camp (x1) – 7d</td>
+        <td data-days="7">Army Camp (x1) – 7d</td>
+        <td data-days="6">Air Defence (x1) – 6d</td>
+        <td data-days="7.25">X-Bow (x1) – 7d 6h</td>
+        <td data-days="7">Builder Hut (x1) – 7d</td>
+        <td data-days="4">Elixir Storage (x1) – 4d</td>
+        <td class="total-time" data-original="38.25">38d 6h</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Popup modal -->
+  <div id="popup">
+    <div id="popup-content">
+      <div id="popup-text">Mark as completed?</div>
+      <button id="confirm-btn">Yes</button>
+      <button id="cancel-btn">No</button>
+    </div>
+  </div>
+
+  <script>
+    // Helper to get a unique key for each cell
+    function getCellKey(row, col) {
+      return `cell-${row}-${col}`;
+    }
+
+    // Load completed cells from localStorage
+    function loadCompletedCells() {
+      const completed = localStorage.getItem('completedCells');
+      return completed ? JSON.parse(completed) : {};
+    }
+
+    // Save completed cells to localStorage
+    function saveCompletedCells(cells) {
+      localStorage.setItem('completedCells', JSON.stringify(cells));
+    }
+
+    // Load reduced times from localStorage
+    function loadReducedTimes() {
+      const reduced = localStorage.getItem('reducedTimes');
+      return reduced ? JSON.parse(reduced) : {};
+    }
+
+    // Save reduced times to localStorage
+    function saveReducedTimes(times) {
+      localStorage.setItem('reducedTimes', JSON.stringify(times));
+    }
+
+    // Convert float days to a string with days and hours (e.g. 7.75 => 7d 18h)
+    function formatDays(days) {
+      const d = Math.floor(days);
+      const h = Math.round((days - d) * 24);
+      return h === 0 ? `${d}d` : `${d}d ${h}h`;
+    }
+
+    // Format string that might include decimal hours (e.g. 37.25 => 37d 6h)
+    function formatTotalTime(daysFloat) {
+      return formatDays(daysFloat);
+    }
+
+    // Update total time in last column for a row, considering completed jobs
+    function updateTotal(row, completedCells, reducedTimes) {
+      const cells = row.querySelectorAll('td');
+      let totalOrig = parseFloat(cells[cells.length - 1].getAttribute('data-original'));
+      let totalReduced = totalOrig;
+
+      // Sum reductions for completed jobs in this row
+      const rowIndex = [...row.parentElement.children].indexOf(row);
+      let reductionSum = 0;
+
+      for (let col = 1; col < cells.length - 1; col++) {
+        const key = getCellKey(rowIndex, col);
+        if (completedCells[key]) {
+          const origDays = parseFloat(cells[col].getAttribute('data-days'));
+          const reduced = reducedTimes[key] ?? origDays * 0.25; // 75% reduction means remaining is 25%
+          reductionSum += (origDays - reduced);
+          // Show reduced time in the cell
+          cells[col].textContent = `${cells[col].textContent.split('–')[0].trim()} – ${formatDays(reduced)}`;
+          cells[col].classList.add('completed');
+        } else {
+          // Reset cell text to original if not completed
+          const origDays = parseFloat(cells[col].getAttribute('data-days'));
+          const baseText = cells[col].textContent.split('–')[0].trim();
+          cells[col].textContent = `${baseText} – ${formatDays(origDays)}`;
+          cells[col].classList.remove('completed');
+        }
+      }
+
+      totalReduced = totalOrig - reductionSum;
+
+      // Show the total time with strikethrough for original, and updated after
+      const totalCell = cells[cells.length - 1];
+      totalCell.innerHTML = `<del>${formatTotalTime(totalOrig)}</del> ${formatTotalTime(totalReduced)}`;
+    }
+
+    // Initialize
+    (function() {
+      const table = document.getElementById('builder-table');
+      const tbody = table.querySelector('tbody');
+      const completedCells = loadCompletedCells();
+      const reducedTimes = loadReducedTimes();
+
+      // Setup popup elements
+      const popup = document.getElementById('popup');
+      const popupText = document.getElementById('popup-text');
+      const confirmBtn = document.getElementById('confirm-btn');
+      const cancelBtn = document.getElementById('cancel-btn');
+
+      let activeCell = null;
+      let activeCellKey = null;
+
+      // Add click event listener for each job cell (skip first and last column)
+      tbody.querySelectorAll('tr').forEach((row, rowIndex) => {
+        row.querySelectorAll('td').forEach((cell, colIndex) => {
+          if (colIndex === 0 || colIndex === row.children.length - 1) return; // Skip builder and total columns
+
+          const key = getCellKey(rowIndex, colIndex);
+          if (completedCells[key]) {
+            cell.classList.add('completed');
+          }
+
+          cell.addEventListener('click', () => {
+            activeCell = cell;
+            activeCellKey = key;
+
+            if (completedCells[key]) {
+              popupText.textContent = "Unmark this job as completed?";
+              confirmBtn.textContent = "Unmark";
+            } else {
+              popupText.textContent = "Mark this job as completed?";
+              confirmBtn.textContent = "Mark Completed";
+            }
+            popup.style.display = 'flex';
+          });
+        });
+      });
+
+      // Confirm button logic
+      confirmBtn.addEventListener('click', () => {
+        if (!activeCell || !activeCellKey) return;
+
+        if (completedCells[activeCellKey]) {
+          // Unmark completed
+          delete completedCells[activeCellKey];
+          delete reducedTimes[activeCellKey];
+        } else {
+          // Mark completed with 75% reduction time
+          completedCells[activeCellKey] = true;
+
+          // Calculate reduced time (25% of original)
+          const origDays = parseFloat(activeCell.getAttribute('data-days'));
+          reducedTimes[activeCellKey] = origDays * 0.25;
+        }
+
+        saveCompletedCells(completedCells);
+        saveReducedTimes(reducedTimes);
+
+        // Update the row total and cells display
+        const row = activeCell.parentElement;
+        updateTotal(row, completedCells, reducedTimes);
+
+        popup.style.display = 'none';
+        activeCell = null;
+        activeCellKey = null;
+      });
+
+      // Cancel button logic
+      cancelBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+        activeCell = null;
+        activeCellKey = null;
+      });
+
+      // Close popup if clicked outside content
+      popup.addEventListener('click', e => {
+        if (e.target === popup) {
+          popup.style.display = 'none';
+          activeCell = null;
+          activeCellKey = null;
+        }
+      });
+
+      // Initialize table display with saved completed cells
+      tbody.querySelectorAll('tr').forEach(row => {
+        updateTotal(row, completedCells, reducedTimes);
+      });
+    })();
+  </script>
+</body>
+</html>
